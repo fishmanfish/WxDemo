@@ -28,6 +28,8 @@ import fishman.fish.wxdemo.bean.WXBean;
 import org.dom4j.Document;
 import org.dom4j.Element;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -56,6 +58,8 @@ import java.util.UUID;
 @SuppressWarnings("all")
 @Component
 public class WXUtils {
+  private Logger log = LoggerFactory.getLogger(WXUtils.class);
+
   private final String RobotURL = "http://www.weilaitec.com/cigirlrobot.cgr?key=%s&msg=%s&ip=%s&userid=%s&appid=%s";    //道翰天琼的免费智能机器人聊天的URL
   private final String GetTokenURL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";  //获取微信access_token
   private final String PostIndustryURL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s";  //菜单定义URL
@@ -85,15 +89,15 @@ public class WXUtils {
     }
     //1）将token、timestamp、nonce三个参数进行字典序排序
     String[] tempArr = {wx.getToken(), timestamp, nonce};
-    System.out.println("字典排序前：" + Arrays.toString(tempArr));
+    log.info("字典排序前：" + Arrays.toString(tempArr));
     Arrays.sort(tempArr);
-    System.out.println("字典排序后：" + Arrays.toString(tempArr));
+    log.info("字典排序后：" + Arrays.toString(tempArr));
 
     //2）将三个参数字符串拼接成一个字符串进行sha1加密
     String tempStr = tempArr[0] + tempArr[1] + tempArr[2];
-    System.out.println("加密前的字符串：" + tempStr);
+    log.info("加密前的字符串：" + tempStr);
     tempStr = shaEncry(tempStr);
-    System.out.println("加密后的字符串：" + tempStr);
+    log.info("加密后的字符串：" + tempStr);
     //3）开发者获得加密后的字符串可与signature对比，标识该请求来源于微信
     if (signature.equalsIgnoreCase(tempStr)) {
       return true;
@@ -121,7 +125,7 @@ public class WXUtils {
       }
       return sb.toString();
     } catch (NoSuchAlgorithmException e) {
-      e.printStackTrace();
+      log.error("shaEncry()方法出现错误：" + e.getMessage());
     }
     return "";
   }
@@ -137,7 +141,7 @@ public class WXUtils {
         map.put(e.getName(), e.getText());   //添加到Map集合中
       });
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("xmlToMap()方法出现错误：" + e.getMessage());
     }
     return map;
   }
@@ -190,7 +194,7 @@ public class WXUtils {
     String xml = "";
     xStream.processAnnotations(type);
     xml = xStream.toXML(massage);
-    System.out.println("发送的XML：\n" + xml);
+    log.info("发送的XML：\n" + xml);
     return xml;
   }
 
@@ -271,7 +275,7 @@ public class WXUtils {
     ByteArrayOutputStream baos = null;
     try {
       String robotURL = String.format(RobotURL, robot.getApiKey(), toMsg, robot.getIp(), robot.getUserID(), robot.getAppID());
-      System.out.println("请求机器人地址：" + robotURL);
+      log.info("请求机器人地址：" + robotURL);
       url = new URL(robotURL);
       conn = (HttpURLConnection) url.openConnection();
       conn.setReadTimeout(5 * 10000);
@@ -294,20 +298,20 @@ public class WXUtils {
       }
 
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("chatRobot()方法出现错误：" + e.getMessage());
     } finally {
       try {
         if (is != null)
           is.close();
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("chatRobot()方法finally块出现错误：" + e.getMessage());
       }
 
       try {
         if (baos != null)
           baos.close();
       } catch (IOException e) {
-        e.printStackTrace();
+        log.error("chatRobot()方法关闭流时出现错误：" + e.getMessage());
       }
       conn.disconnect();
     }
@@ -321,7 +325,7 @@ public class WXUtils {
   public String getAccessToken() {
     if (accessToken == null || (accessToken != null && accessToken.isExpire())) {
       String result = httpUtils.get(String.format(GetTokenURL, wx.getAppID(), wx.getAppSecret()));
-      System.out.println("返回的AccessToken相关信息：" + result);
+      log.info("返回的AccessToken相关信息：" + result);
       if (StringUtils.hasLength(result)) {
         JSONObject jsonObject = JSONObject.parseObject(result);
         accessToken.setToken(jsonObject.getString("access_token"));
@@ -346,9 +350,9 @@ public class WXUtils {
     buttons.add(subButton);
     Button button = new Button(buttons);
     JSONObject json = (JSONObject) JSONObject.toJSON(button);
-    System.out.println("自定义菜单JSON：" + json.toJSONString());
+    log.info("自定义菜单JSON：" + json.toJSONString());
     String result = httpUtils.post(PostIndustryURL, json.toJSONString());
-    System.out.println("返回的自定义菜单状态：" + result);
+    log.info("返回的自定义菜单状态：" + result);
   }
 
   /**
@@ -359,7 +363,7 @@ public class WXUtils {
     json.put("industry_id1", "1");  //公众号模板消息所属行业编号
     json.put("industry_id2", "2");  //公众号模板消息所属行业编号
     String result = httpUtils.post(String.format(SetIndustryURL, getAccessToken()), json.toJSONString());
-    System.out.println("设置所属行业接口返回结果：" + result);
+    log.info("设置所属行业接口返回结果：" + result);
   }
 
 
@@ -377,7 +381,7 @@ public class WXUtils {
   public String getTempID() {
     JSONObject json = new JSONObject();
     String result = httpUtils.post(String.format(GetTempIDURL, getAccessToken()), json.toJSONString());
-    System.out.println("获取的模板ID接口返回结果" + result);
+    log.info("获取的模板ID接口返回结果" + result);
     if (StringUtils.hasLength(result)) {
       JSONObject jsonObject = JSONObject.parseObject(result);
       return jsonObject.getString("template_id_short");
@@ -415,9 +419,9 @@ public class WXUtils {
     dtJson5.put("color", "#173177");
     dataJson.put("remark", dtJson5);
     masterJson.put("data", dataJson);
-    System.out.println("发送的模板消息：" + masterJson);
+    log.info("发送的模板消息：" + masterJson);
     String result = httpUtils.post(SendTempURL, masterJson.toJSONString());
-    System.out.println("发送模板接口返回结果：" + result);
+    log.info("发送模板接口返回结果：" + result);
   }
 
 
@@ -432,7 +436,7 @@ public class WXUtils {
         JSONObject json = JSONObject.parseObject(result);
         jsApiTicket.setTicket(json.getString("ticket"));
         jsApiTicket.setExpireTime(json.getString("expires_in"));
-        System.out.println("获取JSApi_Ticket接口的返回结果：" + json);
+        log.info("获取JSApi_Ticket接口的返回结果：" + json);
       }
     }
     return jsApiTicket.getTicket();

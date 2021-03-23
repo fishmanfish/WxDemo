@@ -1,5 +1,8 @@
 package fishman.fish.wxdemo.util;
 
+import fishman.fish.wxdemo.controller.WXControlller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -16,6 +19,7 @@ import java.net.URLConnection;
  */
 @Component
 public class HttpUtils {
+  private Logger log = LoggerFactory.getLogger(WXControlller.class);
 
   @Autowired
   private WXUtils wxUtils;
@@ -42,7 +46,7 @@ public class HttpUtils {
       is.close();
       return sb.toString();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("post()方法出现错误：" + e.getMessage());
     }
     return "";
   }
@@ -61,7 +65,7 @@ public class HttpUtils {
       is.close();
       return sb.toString();
     } catch (Exception e) {
-      e.printStackTrace();
+      log.error("get()方法出现错误：" + e.getMessage());
     }
     return "";
   }

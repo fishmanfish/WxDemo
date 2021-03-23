@@ -2,6 +2,8 @@ package fishman.fish.wxdemo.controller;
 
 import com.alibaba.fastjson.JSONObject;
 import fishman.fish.wxdemo.util.WXUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -26,6 +28,7 @@ import java.util.Map;
 @Controller
 @RequestMapping("/wx")
 public class WXControlller {
+  private Logger log = LoggerFactory.getLogger(WXControlller.class);
   @Autowired
   private WXUtils wxUtils;
 
@@ -35,15 +38,15 @@ public class WXControlller {
                         @RequestParam("timestamp") String timestamp,  //时间戳
                         @RequestParam("nonce") String nonce,  //随机数
                         @RequestParam("echostr") String echostr) {  //随机字符串
-    System.out.println("微信加密签名：" + signature);
-    System.out.println("时间戳：" + timestamp);
-    System.out.println("随机数：" + nonce);
-    System.out.println("随机字符串：" + echostr);
+    log.info("微信加密签名：" + signature);
+    log.info("时间戳：" + timestamp);
+    log.info("随机数：" + nonce);
+    log.info("随机字符串：" + echostr);
     if (wxUtils.checkInit(timestamp, nonce, signature)) {
-      System.out.println("接口配置成功");
+      log.info("接口配置成功");
       return echostr;
     } else {
-      System.out.println("接口配置失败");
+      log.info("接口配置失败");
       return "";
     }
   }
@@ -58,12 +61,12 @@ public class WXControlller {
     try {
       Map<String, String> map = wxUtils.xmlToMap(request.getInputStream());
       map.entrySet().forEach((Map.Entry<String, String> kvs) -> {
-        System.out.println("键：" + kvs.getKey() + ", 值：" + kvs.getValue());
+        log.info("键：" + kvs.getKey() + ", 值：" + kvs.getValue());
       });
 
       returnMsg = wxUtils.getReturnMsg(map);
     } catch (IOException e) {
-      e.printStackTrace();
+      log.error("initPost()方法出现错误：" + e.getMessage());
     }
     return returnMsg;
   }
