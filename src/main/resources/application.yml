@@ -1,0 +1,21 @@
+server:
+  port: 80
+spring:
+  thymeleaf:
+    cache: false
+
+#微信公众号一些参数配置
+wx:
+  appID: "wxc6d0cb3e75649eca"
+  appSecret: "1e38d886b05e51c240ae23540ac849b6"
+  token: "fishman"
+  openID: "os8JR6qBb-WtNJYr0MG_aeTQpSQ4"
+  tempID: "b6j0M9VwkjTCHncmUDrsp459opxvA_7gHYK6Ia5CqDI"
+  currentURL: "http://fishman.free.idcfengye.com"
+
+#微信聊天机器人
+robot:
+  userID: "fishman"
+  appID: "1616210274861"
+  apiKey: "MIIQGO3ISMIX965PVPKU3BECVQQSKM9JDHP5OOZA68DWTX690N"
+  ip: "2930306573"
