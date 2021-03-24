@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fishman.fish.wxdemo.mapper.TestMapper">
+    <cache flushInterval="60000" readOnly="true" size="512"></cache>
+
+    <resultMap id="testMap" type="Test">
+        <id property="testID" column="testID"></id>
+        <result property="testName" column="testName"></result>
+        <result property="created" column="created"></result>
+
+        <association property="emp" javaType="Emp">
+            <id property="empID" column="empID"></id>
+            <result property="empName" column="empName"></result>
+        </association>
+
+        <association property="dept" javaType="Dept">
+            <id property="deptID" column="deptID"></id>
+            <result property="deptName" column="deptName"></result>
+        </association>
+    </resultMap>
+
+    <select id="findTestByID" resultMap="testMap" parameterType="String">
+        select test.id    testID,
+               test.sname testName,
+               test.created,
+               dept.id    deptID,
+               dept.sname deptName,
+               emp.id     empID,
+               emp.sname  empName
+        from test
+                 left join org_employee emp on emp.id = test.idowner
+                 left join org_dep dept on dept.id = test.iddep
+        where test.id = #{id}
+    </select>
+
+</mapper>

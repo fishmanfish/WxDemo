@@ -10,6 +10,7 @@ import lombok.Data;
  */
 @Data
 public class Emp {
-  private String id;
+  private String empID;
   private String empName;
+  private Dept dept;
 }

@@ -10,9 +10,9 @@ import lombok.Data;
  */
 @Data
 public class Test {
-  private String id;
-  private String sname;
+  private String testID;
+  private String testName;
+  private String created;
   private Emp emp;
   private Dept dept;
-  private String created;
 }

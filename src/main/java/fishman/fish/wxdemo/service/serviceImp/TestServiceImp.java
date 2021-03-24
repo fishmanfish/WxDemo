@@ -1,14 +1,15 @@
 package fishman.fish.wxdemo.service.serviceImp;
 
+import fishman.fish.wxdemo.bean.Dept;
 import fishman.fish.wxdemo.bean.Test;
-import fishman.fish.wxdemo.mapper.BeanMapper;
-import fishman.fish.wxdemo.service.BeanService;
-import org.springframework.beans.factory.annotation.Autowired;
+import fishman.fish.wxdemo.mapper.TestMapper;
+import fishman.fish.wxdemo.service.TestService;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author
@@ -18,15 +19,15 @@ import javax.annotation.Resource;
  */
 
 @Service
-@CacheConfig(cacheNames = "beanService")
-public class BeanServiceImp implements BeanService {
+@CacheConfig(cacheNames = "beanService", keyGenerator = "myKeyGenerator")
+public class TestServiceImp implements TestService {
 
   @Resource
-  private BeanMapper mapper;
+  private TestMapper mapper;
 
   @Override
   @Cacheable(condition = "#id.length() > 0")
-  public Test findBeanByID(String id) {
-    return mapper.findBeanByID(id);
+  public Test findTestByID(String id) {
+    return mapper.findTestByID(id);
   }
 }

@@ -2,6 +2,8 @@ package fishman.fish.wxdemo.bean;
 
 import lombok.Data;
 
+import java.util.List;
+
 /**
  * @author
  * @Package fishman.fish.wxdemo.bean
@@ -10,6 +12,7 @@ import lombok.Data;
  */
 @Data
 public class Dept {
-  private String id;
+  private String deptID;
   private String deptName;
+  private List<Emp> emps;
 }

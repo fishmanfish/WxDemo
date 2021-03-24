@@ -1,0 +1,67 @@
+{
+  "groups": [
+    {
+      "name": "robot",
+      "type": "fishman.fish.wxdemo.bean.Robot",
+      "sourceType": "fishman.fish.wxdemo.bean.Robot"
+    },
+    {
+      "name": "wx",
+      "type": "fishman.fish.wxdemo.bean.WXBean",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    }
+  ],
+  "properties": [
+    {
+      "name": "robot.api-key",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.Robot"
+    },
+    {
+      "name": "robot.app-i-d",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.Robot"
+    },
+    {
+      "name": "robot.ip",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.Robot"
+    },
+    {
+      "name": "robot.user-i-d",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.Robot"
+    },
+    {
+      "name": "wx.app-i-d",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    },
+    {
+      "name": "wx.app-secret",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    },
+    {
+      "name": "wx.current-u-r-l",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    },
+    {
+      "name": "wx.open-i-d",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    },
+    {
+      "name": "wx.temp-i-d",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    },
+    {
+      "name": "wx.token",
+      "type": "java.lang.String",
+      "sourceType": "fishman.fish.wxdemo.bean.WXBean"
+    }
+  ],
+  "hints": []
+}

@@ -1,6 +1,9 @@
 package fishman.fish.wxdemo.service;
 
+import fishman.fish.wxdemo.bean.Dept;
 import fishman.fish.wxdemo.bean.Test;
+
+import java.util.List;
 
 /**
  * @author
@@ -8,9 +11,9 @@ import fishman.fish.wxdemo.bean.Test;
  * @date 2021/3/24 11:47
  * @Copyright
  */
-public interface BeanService {
+public interface TestService {
 
-  Test findBeanByID(String id);
+  Test findTestByID(String id);
 
 
 }

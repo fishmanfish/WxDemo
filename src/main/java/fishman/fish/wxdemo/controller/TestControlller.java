@@ -1,23 +1,18 @@
 package fishman.fish.wxdemo.controller;
 
-import com.alibaba.fastjson.JSONObject;
+import fishman.fish.wxdemo.bean.Dept;
 import fishman.fish.wxdemo.bean.Test;
-import fishman.fish.wxdemo.service.BeanService;
-import fishman.fish.wxdemo.util.WXUtils;
+import fishman.fish.wxdemo.service.TestService;
+import fishman.fish.wxdemo.util.HttpUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.Map;
+import java.util.List;
 
 /**
  * @author
@@ -28,19 +23,20 @@ import java.util.Map;
 @SuppressWarnings("all")
 @Controller
 @RequestMapping("/bean")
-public class BeanControlller {
-  private Logger log = LoggerFactory.getLogger(BeanControlller.class);
+public class TestControlller {
+  private Logger log = LoggerFactory.getLogger(TestControlller.class);
 
   @Autowired
-  private BeanService beanService;
+  private TestService testService;
+  @Autowired
+  private HttpUtils httpUtils;
 
-  @RequestMapping("/find/{id}")
+  @RequestMapping("/findTest/{id}")
   @ResponseBody
-  public Test findBeanByID(@PathVariable("id") String id){
-    Test test = beanService.findBeanByID(id);
+  public Test findTestByID(@PathVariable("id") String id){
+    Test test = testService.findTestByID(id);
     log.info("获取到的数据：" + test);
     return test;
   }
-
 
 }
