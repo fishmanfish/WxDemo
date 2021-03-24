@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="fishman.fish.wxdemo.mapper.BeanMapper">
+    <cache flushInterval="60000" readOnly="true" size="512"></cache>
+
+    <resultMap id="beanMap" type="Test">
+        <id property="id" column="id"></id>
+        <result property="sname" column="sname"></result>
+        <result property="created" column="created"></result>
+        <association property="dept" javaType="Dept">
+            <id property="id" column="id"></id>
+            <result property="deptName" column="sname"></result>
+        </association>
+        <association property="emp" javaType="Emp">
+            <id property="id" column="id"></id>
+            <result property="empName" column="sname"></result>
+        </association>
+    </resultMap>
+
+    <select id="findBeanByID" resultMap="beanMap" parameterType="int">
+        select test.sname,testcreated,emp.sname empName,dept.sname deptName
+        from test
+        left join org_employee emp on emp.id=test.idowner
+        left join org_dep dept on dept.id=test.iddep
+        where test.id=#{id}
+    </select>
+
+</mapper>

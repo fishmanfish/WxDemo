@@ -4,18 +4,17 @@ spring:
   thymeleaf:
     cache: false
   datasource:
-    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
-    url: jdbc:sqlserver://127.0.0.1:1433;DatabaseName=DIGICRM
-    username: sa
-    password: 980813
+    driverClassName: com.microsoft.sqlserver.jdbc.SQLServerDriver
+    url: "jdbc:sqlserver://localhost:1433;DatabaseName=DIGICRM"
+    username: "sa"
+    password: "980813"
 
 mybatis:
   type-aliases-package: fishman.fish.wxdemo.bean   #实体类别名
-  mapper-locaions: classpath:mybatis/mapper/*.xml  #对应的sql配置文件
-  config-locaion: classpath:mybatis/mybatis-config.xml  #mybatis主配置文件
+  mapper-locations: classpath:mybatis/mapper/*.xml  #对应的sql配置文件
+  config-location: classpath:mybatis/mybatis-config.xml  #mybatis主配置文件
   configuration:
     map-underscore-to-camel-case: true   #驼峰命名
-
 
 #微信公众号一些参数配置
 wx:
@@ -35,4 +34,4 @@ robot:
 
 logging:
   level:
-    fishman.fish.wxdemo.controller: debug
+    fishman.fish.wxdemo.controller: debug  #设置日志级别
