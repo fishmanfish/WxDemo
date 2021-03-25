@@ -8,6 +8,7 @@
         <version>2.4.4</version>
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
+    <packaging>war</packaging>  <!--使用外部Tomcat时使用war-->
     <groupId>fishman.fish</groupId>
     <artifactId>wxdemo</artifactId>
     <version>0.0.1-SNAPSHOT</version>
@@ -60,7 +61,24 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-tomcat</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+        <!--引入外部Tomcat时需定义为provided-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-tomcat</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <!--<dependency>  &lt;!&ndash;JSP支持&ndash;&gt;
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <version>3.1.0</version>
+        </dependency>-->
 
         <!--mysql驱动-->
         <dependency>
@@ -82,11 +100,11 @@
             <artifactId>mssql-jdbc</artifactId>
             <scope>runtime</scope>
         </dependency>
-         <dependency>
-             <groupId>com.microsoft.sqlserver</groupId>
-             <artifactId>sqljdbc4</artifactId>
-             <version>4.0</version>
-         </dependency>
+        <dependency>
+            <groupId>com.microsoft.sqlserver</groupId>
+            <artifactId>sqljdbc4</artifactId>
+            <version>4.0</version>
+        </dependency>
 
         <!--整合缓存-->
         <dependency>

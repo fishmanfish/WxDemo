@@ -22,7 +22,7 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 @Controller
-@RequestMapping("/bean")
+@RequestMapping("/test")
 public class TestControlller {
   private Logger log = LoggerFactory.getLogger(TestControlller.class);
 
@@ -31,7 +31,7 @@ public class TestControlller {
   @Autowired
   private HttpUtils httpUtils;
 
-  @RequestMapping("/findTest/{id}")
+  @RequestMapping("/get/{id}")
   @ResponseBody
   public Test findTestByID(@PathVariable("id") String id){
     Test test = testService.findTestByID(id);

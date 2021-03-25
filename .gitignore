@@ -27,3 +27,8 @@ target/
 .idea
 .mvn
 log
+env
+src/main/webapp/WEB-INF/classes
+bin
+webapps
+out

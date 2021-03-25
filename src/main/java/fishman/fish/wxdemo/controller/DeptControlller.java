@@ -24,7 +24,7 @@ import java.util.List;
  */
 @SuppressWarnings("all")
 @Controller
-@RequestMapping("/bean")
+@RequestMapping("/dept")
 public class DeptControlller {
   private Logger log = LoggerFactory.getLogger(DeptControlller.class);
 
@@ -33,7 +33,7 @@ public class DeptControlller {
   @Autowired
   private HttpUtils httpUtils;
 
-  @RequestMapping("/findDepts")
+  @RequestMapping("/list")
   @ResponseBody
   public List<Dept> findDeptsByID(){
     List<Dept> depts = deptService.findDeptsByID();
