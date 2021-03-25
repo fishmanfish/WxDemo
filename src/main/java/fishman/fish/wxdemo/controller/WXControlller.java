@@ -1,18 +1,17 @@
 package fishman.fish.wxdemo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import fishman.fish.wxdemo.util.HttpUtils;
 import fishman.fish.wxdemo.util.WXUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -78,15 +77,29 @@ public class WXControlller {
    */
   @PostMapping("/getJsApiTickt")
   @ResponseBody
-  public JSONObject getTicket(@RequestParam("requestUrl") String requestUrl) {
+  public JSONObject getJsApiTickt(@RequestParam("requestUrl") String requestUrl) {
     JSONObject json = wxUtils.getJSAPIConfig(requestUrl);
+    return json;
+  }
+
+
+  /**
+   * 获取用户基本信息
+   * @param code
+   * @return
+   */
+  @PostMapping("/getWxUserInfo")
+  @ResponseBody
+  public JSONObject getWxUserInfo(@RequestParam("code") String code) {
+    log.info("获取到的code：" + code);
+    JSONObject json = wxUtils.getWxUserInfo(code);
     return json;
   }
 
   @RequestMapping("/index")
   public String index(HttpServletRequest request){
     request.setAttribute("requestUrl", request.getRequestURI());
-    return "index";
+    return "regist";
   }
 
 

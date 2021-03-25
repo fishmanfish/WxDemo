@@ -1,5 +1,6 @@
 package fishman.fish.wxdemo.util;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.thoughtworks.xstream.XStream;
 import fishman.fish.wxdemo.bean.AbstractBtn;
@@ -17,6 +18,7 @@ import fishman.fish.wxdemo.bean.MusicMassage;
 import fishman.fish.wxdemo.bean.PhotoButton;
 import fishman.fish.wxdemo.bean.Robot;
 import fishman.fish.wxdemo.bean.ScanCodeButton;
+import fishman.fish.wxdemo.bean.ScopeAccessToken;
 import fishman.fish.wxdemo.bean.SubButton;
 import fishman.fish.wxdemo.bean.TextMassage;
 import fishman.fish.wxdemo.bean.Video;
@@ -45,6 +47,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Formatter;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -60,14 +63,18 @@ import java.util.UUID;
 public class WXUtils {
   private Logger log = LoggerFactory.getLogger(WXUtils.class);
 
-  private final String RobotURL = "http://www.weilaitec.com/cigirlrobot.cgr?key=%s&msg=%s&ip=%s&userid=%s&appid=%s";    //道翰天琼的免费智能机器人聊天的URL
+  private final String PostRobotURL = "http://www.weilaitec.com/cigirlrobot.cgr?key=%s&msg=%s&ip=%s&userid=%s&appid=%s";    //道翰天琼的免费智能机器人聊天的URL
   private final String GetTokenURL = "https://api.weixin.qq.com/cgi-bin/token?grant_type=client_credential&appid=%s&secret=%s";  //获取微信access_token
   private final String PostIndustryURL = "https://api.weixin.qq.com/cgi-bin/menu/create?access_token=%s";  //菜单定义URL
   private final String SetIndustryURL = "https://api.weixin.qq.com/cgi-bin/template/api_set_industry?access_token=%s";  //设置所属行业URL
   private final String GetIndustryURL = "https://api.weixin.qq.com/cgi-bin/template/get_industry?access_token=%s";  //获取所属行业URL
   private final String GetTempIDURL = "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=%s";  //获取模板ID URL
-  private final String SendTempURL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";  //发送消息模板URL@Autowired
-  private final String JSApiTicketURL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";  //获取调用微信接口临时票据的URL
+  private final String PostSendTempURL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";  //发送消息模板URL@Autowired
+  private final String GetJSApiTicketURL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";  //获取调用微信接口临时票据的URL
+  private final String GetAuthorizeURL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";  //scope为snsapi_userinfo的网页授权获取code
+  private final String GetScopeTokenURL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";  //获取网页授权的access_token
+  private final String GetRefreshTokenURL = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s";  //刷新网页授权的access_token
+  private final String GetUserInfo = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";  //刷新网页授权的access_token
 
   @Autowired
   private HttpUtils httpUtils;
@@ -77,6 +84,8 @@ public class WXUtils {
   private Robot robot;
   @Autowired
   private AccessToken accessToken;
+  @Autowired
+  private ScopeAccessToken scopeToken;
   @Autowired
   private JSApiTicket jsApiTicket;
 
@@ -274,7 +283,7 @@ public class WXUtils {
     InputStream is = null;
     ByteArrayOutputStream baos = null;
     try {
-      String robotURL = String.format(RobotURL, robot.getApiKey(), toMsg, robot.getIp(), robot.getUserID(), robot.getAppID());
+      String robotURL = String.format(PostRobotURL, robot.getApiKey(), toMsg, robot.getIp(), robot.getUserID(), robot.getAppID());
       log.info("请求机器人地址：" + robotURL);
       url = new URL(robotURL);
       conn = (HttpURLConnection) url.openConnection();
@@ -336,6 +345,8 @@ public class WXUtils {
   }
 
   public void diyMenu() {
+    /*String result = httpUtils.get("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=" + getAccessToken());
+    log.info("删除自定义菜单" + result);*/
     List<AbstractBtn> buttons = new ArrayList<>();
     ClickButton clickButton = new ClickButton("点击菜单1", "click");
     buttons.add(clickButton);
@@ -347,6 +358,22 @@ public class WXUtils {
     ScanCodeButton scanCodeButton = new ScanCodeButton("扫码", "scancode", new ArrayList<>());
     subButtons.add(scanCodeButton);
     SubButton subButton = new SubButton("集合菜单3", subButtons);
+    buttons.add(subButton);
+    Button button = new Button(buttons);
+    JSONObject json = (JSONObject) JSONObject.toJSON(button);
+    log.info("自定义菜单JSON：" + json.toJSONString());
+    String result = httpUtils.post(PostIndustryURL, json.toJSONString());
+    log.info("返回的自定义菜单状态：" + result);
+  }
+
+  public void diyMenu2() {
+    List<AbstractBtn> buttons = new ArrayList<>();
+    List<AbstractBtn> subButtons = new LinkedList<>();
+    ClickButton clickButton = new ClickButton("申请服务", wx.getCurrentURL() + "/fwqq/sqfw");
+    subButtons.add(clickButton);
+    ViewButton viewButton = new ViewButton("我的设备", wx.getCurrentURL() + "/fwqq/mysb");
+    subButtons.add(viewButton);
+    SubButton subButton = new SubButton("服务请求", subButtons);
     buttons.add(subButton);
     Button button = new Button(buttons);
     JSONObject json = (JSONObject) JSONObject.toJSON(button);
@@ -420,7 +447,7 @@ public class WXUtils {
     dataJson.put("remark", dtJson5);
     masterJson.put("data", dataJson);
     log.info("发送的模板消息：" + masterJson);
-    String result = httpUtils.post(SendTempURL, masterJson.toJSONString());
+    String result = httpUtils.post(PostSendTempURL, masterJson.toJSONString());
     log.info("发送模板接口返回结果：" + result);
   }
 
@@ -430,7 +457,7 @@ public class WXUtils {
    */
   public String getJSApiTikect() {
     if(jsApiTicket == null || (jsApiTicket != null && jsApiTicket.isExpire())){
-      String url = String.format(JSApiTicketURL, getAccessToken());
+      String url = String.format(GetJSApiTicketURL, getAccessToken());
       String result = httpUtils.get(url);
       if (StringUtils.hasLength(result)) {
         JSONObject json = JSONObject.parseObject(result);
@@ -440,6 +467,43 @@ public class WXUtils {
       }
     }
     return jsApiTicket.getTicket();
+  }
+
+  /**
+   *
+   * 网页授权，获取用户的基本信息
+   * s应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
+   * snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。
+   * 并且， 即使在未关注的情况下，只要用户授权，也能获取其信息
+   */
+  public void getAuthorizeCode(){
+    //获取code
+    String result = httpUtils.get(String.format(GetAuthorizeURL, wx.getAppID(), ""));
+    log.info("网页授权获取到的code：" + result);
+  }
+
+  public String getScopeToken(String code){
+    if(scopeToken == null || (scopeToken != null && scopeToken.isExpire())) {
+      String result = httpUtils.get(String.format(GetScopeTokenURL, wx.getAppID(), code));
+      if (StringUtils.hasLength(result)) {
+        JSONObject tokenJson = JSONObject.parseObject(result);
+        scopeToken.setToken(tokenJson.getString("access_token"));
+        scopeToken.setExpireTime(tokenJson.getString("expires_in"));
+        scopeToken.setRefreshToken(tokenJson.getString("refresh_token"));
+        log.info("获取到的网页授权access_token：" + tokenJson.toJSONString());
+      }
+    }
+    return scopeToken.getToken();
+  }
+
+  public JSONObject getWxUserInfo(String code){
+    String scopeToken = getScopeToken(code);
+    String result = httpUtils.get(String.format(GetUserInfo, scopeToken, wx.getOpenID()));
+    if (StringUtils.hasLength(result)) {
+      log.info("获取到的用户授权信息：" + result);
+      return JSONObject.parseObject(result);
+    }
+    return null;
   }
 
   /**
