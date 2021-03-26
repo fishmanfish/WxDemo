@@ -30,4 +30,14 @@ public class TestServiceImp implements TestService {
   public Test findTestByID(String id) {
     return mapper.findTestByID(id);
   }
+
+  @Override
+  public Test findTestByOpenID(String openID) {
+    return mapper.findTestByOpenID(openID);
+  }
+
+  @Override
+  public void addTest(Test test) {
+    mapper.addTest(test);
+  }
 }

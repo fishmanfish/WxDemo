@@ -1,7 +1,6 @@
 package fishman.fish.wxdemo.config;
 
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
@@ -17,6 +16,7 @@ public class ResourceConfig implements WebMvcConfigurer {
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("/error").setViewName("error");
+    registry.addViewController("/saoma").setViewName("saoma");
   }
 
   /*@Override

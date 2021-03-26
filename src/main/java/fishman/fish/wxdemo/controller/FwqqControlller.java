@@ -1,18 +1,12 @@
 package fishman.fish.wxdemo.controller;
 
-import com.alibaba.fastjson.JSONObject;
-import fishman.fish.wxdemo.bean.Test;
 import fishman.fish.wxdemo.service.TestService;
-import fishman.fish.wxdemo.util.HttpUtils;
+import fishman.fish.wxdemo.util.WXUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
 
 /**
  * @author
@@ -29,7 +23,7 @@ public class FwqqControlller {
   @Autowired
   private TestService testService;
   @Autowired
-  private HttpUtils httpUtils;
+  private WXUtils wxUtils;
 
   /**
    * 申请服务
@@ -37,10 +31,19 @@ public class FwqqControlller {
    * @return
    */
   @RequestMapping("/sqfw")
-  public String findTestByID(){
-    /*Test test = testService.findTestByID(id);
-    log.info("获取到的数据：" + test);*/
+  public String sqfw(){
+    String url = wxUtils.toAuthScope("sqfw");
+    return "redirect:" + url;
+  }
 
-    return "regist";
+  /**
+   * 我的设备
+   * @param id
+   * @return
+   */
+  @RequestMapping("/mysb")
+  public String mysb(){
+    String url = wxUtils.toAuthScope("mysb");
+    return "redirect:" + url;
   }
 }

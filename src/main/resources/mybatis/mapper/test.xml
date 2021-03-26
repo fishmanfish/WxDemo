@@ -8,6 +8,8 @@
     <resultMap id="testMap" type="Test">
         <id property="testID" column="testID"></id>
         <result property="testName" column="testName"></result>
+        <result property="stel" column="stel"></result>
+        <result property="openID" column="openID"></result>
         <result property="created" column="created"></result>
 
         <association property="emp" javaType="Emp">
@@ -24,6 +26,8 @@
     <select id="findTestByID" resultMap="testMap" parameterType="String">
         select test.id    testID,
                test.sname testName,
+               test.stel stel,
+               test.openID openID,
                test.created,
                dept.id    deptID,
                dept.sname deptName,
@@ -34,5 +38,14 @@
                  left join org_dep dept on dept.id = test.iddep
         where test.id = #{id}
     </select>
+
+    <select id="findTestByOpenID" resultMap="testMap" parameterType="String">
+        select id testID from test where openid=#{openID}
+    </select>
+
+    <insert id="addTest" keyProperty="id" parameterType="Test">
+        insert into test (id,sname,stel,openid,created,updated,idowner,iddep,createdby,updatedby)
+        values(#{testID},#{testName},#{stel},#{openID},getdate(),getdate(),#{idowner},#{iddep},#{idowner},#{idowner})
+    </insert>
 
 </mapper>

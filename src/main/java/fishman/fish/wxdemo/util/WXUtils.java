@@ -71,7 +71,7 @@ public class WXUtils {
   private final String GetTempIDURL = "https://api.weixin.qq.com/cgi-bin/template/api_add_template?access_token=%s";  //获取模板ID URL
   private final String PostSendTempURL = "https://api.weixin.qq.com/cgi-bin/message/template/send?access_token=%s";  //发送消息模板URL@Autowired
   private final String GetJSApiTicketURL = "https://api.weixin.qq.com/cgi-bin/ticket/getticket?access_token=%s&type=jsapi";  //获取调用微信接口临时票据的URL
-  private final String GetAuthorizeURL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=snsapi_userinfo&state=STATE#wechat_redirect";  //scope为snsapi_userinfo的网页授权获取code
+  private final String GetAuthorizeURL = "https://open.weixin.qq.com/connect/oauth2/authorize?appid=%s&redirect_uri=%s&response_type=code&scope=%s&state=%s#wechat_redirect";  //scope为snsapi_userinfo的网页授权获取code
   private final String GetScopeTokenURL = "https://api.weixin.qq.com/sns/oauth2/access_token?appid=%s&secret=%s&code=%s&grant_type=authorization_code";  //获取网页授权的access_token
   private final String GetRefreshTokenURL = "https://api.weixin.qq.com/sns/oauth2/refresh_token?appid=%s&grant_type=refresh_token&refresh_token=%s";  //刷新网页授权的access_token
   private final String GetUserInfo = "https://api.weixin.qq.com/sns/userinfo?access_token=%s&openid=%s&lang=zh_CN";  //刷新网页授权的access_token
@@ -173,12 +173,12 @@ public class WXUtils {
     /**
      *
      * 网页授权，获取用户的基本信息
-     * s应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
+     * scope应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
      * snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。
      * 并且， 即使在未关注的情况下，只要用户授权，也能获取其信息
      */
       //获取code
-      String url = String.format(GetAuthorizeURL, wx.getAppID(), "http://fishman.free.idcfengye.com/wx/getWxUserInfo");
+      String url = String.format(GetAuthorizeURL, wx.getAppID(), "http://fishman.free.idcfengye.com/wx/getWxUserInfo", "snsapi_base", "");
       returnMsg = beanToXml(TextMassage.class, new TextMassage(map, "点击这里→ <a href='" + url + "'>登录</a>"));
       return returnMsg;
     }
@@ -356,6 +356,10 @@ public class WXUtils {
     return accessToken.getToken();
   }
 
+  /**
+   *
+   * 自定义菜单1
+   * */
   public void diyMenu() {
     /*String result = httpUtils.get("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=" + getAccessToken());
     log.info("删除自定义菜单" + result);*/
@@ -378,13 +382,17 @@ public class WXUtils {
     log.info("返回的自定义菜单状态：" + result);
   }
 
+  /**
+   *
+   * 自定义菜单2
+   * */
   public void diyMenu2() {
     List<AbstractBtn> buttons = new ArrayList<>();
     List<AbstractBtn> subButtons = new LinkedList<>();
-    ClickButton clickButton = new ClickButton("申请服务", wx.getCurrentURL() + "/fwqq/sqfw");
-    subButtons.add(clickButton);
-    ViewButton viewButton = new ViewButton("我的设备", wx.getCurrentURL() + "/fwqq/mysb");
-    subButtons.add(viewButton);
+    ViewButton viewButton1 = new ViewButton("申请服务", wx.getCurrentURL() + "/fwqq/sqfw");
+    subButtons.add(viewButton1);
+    ViewButton viewButton2 = new ViewButton("我的设备", wx.getCurrentURL() + "/fwqq/mysb");
+    subButtons.add(viewButton2);
     SubButton subButton = new SubButton("服务请求", subButtons);
     buttons.add(subButton);
     Button button = new Button(buttons);
@@ -392,6 +400,11 @@ public class WXUtils {
     log.info("自定义菜单JSON：" + json.toJSONString());
     String result = httpUtils.post(PostIndustryURL, json.toJSONString());
     log.info("返回的自定义菜单状态：" + result);
+  }
+
+  public void delDiyMenu(){
+    String result = httpUtils.get(String.format("https://api.weixin.qq.com/cgi-bin/menu/delete?access_token=%s", getAccessToken()));
+    log.info("删除自定义菜单的返回：" + result);
   }
 
   /**
@@ -435,7 +448,7 @@ public class WXUtils {
     JSONObject masterJson = new JSONObject();
     masterJson.put("touser", wx.getOpenID());
     masterJson.put("template_id", wx.getTempID());
-    masterJson.put("url", "http://fishman.free.idcfengye.com/wx/index");  //增加此选项将会出现 "详情" 字段
+    masterJson.put("url", "http://fishman.free.idcfengye.com/wx/saoma");  //增加此选项将会出现 "详情" 字段
     JSONObject dataJson = new JSONObject();
     JSONObject dtJson1 = new JSONObject();
     dtJson1.put("value", "简历反馈通知");
@@ -496,6 +509,16 @@ public class WXUtils {
     return scopeToken.getToken();
   }
 
+  /**
+   *
+   * @param str
+   * @return  返回网页授权code的访问地址
+   */
+  public String toAuthScope(String toUrlStr){
+    String url = String.format(GetAuthorizeURL, wx.getAppID(), "http://fishman.free.idcfengye.com/wx/getWxUserInfo", "snsapi_base", toUrlStr);
+    return url;
+  }
+
   public JSONObject getWxUserInfo(String code){
     String scopeToken = getScopeToken(code);
     String result = httpUtils.get(String.format(GetUserInfo, scopeToken, wx.getOpenID()));
@@ -524,7 +547,7 @@ public class WXUtils {
     // 那么安全域名就为：blog.csdn.net
     // 举例：如果接口地址是：http://fishman.free.idcfengye.com/exhibitionhall
     // 那么安全域名就为：fishman.free.idcfengye.com
-    String signature = shaEncry(String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s",ticket, nonceStr, timeTamp, wx.getCurrentURL() + requestUrl));
+    String signature = shaEncry(String.format("jsapi_ticket=%s&noncestr=%s&timestamp=%s&url=%s",ticket, nonceStr, timeTamp, requestUrl));
     json.put("signature", signature);
     return json;
   }

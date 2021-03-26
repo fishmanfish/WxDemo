@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
@@ -10,7 +11,9 @@
   <div class="weui-msg">
     <div class="weui-msg__icon-area"><i class="weui-icon-warn weui-icon_msg"></i></div>
     <div class="weui-msg__text-area">
-      <h2 class="weui-msg__title">系统错误，请联系供应商</h2><!--<p class="weui-msg__desc">请重新尝试一下！</p>-->
+      <h2 class="weui-msg__title"
+          th:text="${#request.getAttribute('msg') == '' or #request.getAttribute('msg') == null } ?
+          '系统错误，请联系供应商' : ${#request.getAttribute('msg')}">系统错误，请联系供应商</h2><!--<p class="weui-msg__desc">请重新尝试一下！</p>-->
 
     </div>
     <div class="weui-msg__tips-area">

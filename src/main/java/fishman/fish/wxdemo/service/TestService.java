@@ -2,6 +2,7 @@ package fishman.fish.wxdemo.service;
 
 import fishman.fish.wxdemo.bean.Dept;
 import fishman.fish.wxdemo.bean.Test;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 
@@ -15,5 +16,8 @@ public interface TestService {
 
   Test findTestByID(String id);
 
+  Test findTestByOpenID(String openID);
+
+  void addTest(Test test);
 
 }

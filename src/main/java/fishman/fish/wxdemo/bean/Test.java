@@ -12,7 +12,11 @@ import lombok.Data;
 public class Test {
   private String testID;
   private String testName;
+  private String stel;
+  private String openID;
   private String created;
+  private String idowner;
+  private String iddep;
   private Emp emp;
   private Dept dept;
 }

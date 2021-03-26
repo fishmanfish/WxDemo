@@ -9,4 +9,8 @@ import java.util.List;
 
 public interface TestMapper {
   Test findTestByID(@Param("id") String id);
+
+  Test findTestByOpenID(@Param("openID") String openID);
+
+  void addTest(Test test);
 }

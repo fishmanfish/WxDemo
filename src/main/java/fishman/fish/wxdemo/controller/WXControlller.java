@@ -1,12 +1,17 @@
 package fishman.fish.wxdemo.controller;
 
 import com.alibaba.fastjson.JSONObject;
+import fishman.fish.wxdemo.bean.Test;
+import fishman.fish.wxdemo.service.TestService;
 import fishman.fish.wxdemo.util.HttpUtils;
+import fishman.fish.wxdemo.util.Oid;
 import fishman.fish.wxdemo.util.WXUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,6 +35,9 @@ public class WXControlller {
   private Logger log = LoggerFactory.getLogger(WXControlller.class);
   @Autowired
   private WXUtils wxUtils;
+
+  @Autowired
+  private TestService testService;
 
   @GetMapping("/init")
   @ResponseBody
@@ -89,17 +97,25 @@ public class WXControlller {
    * @return
    */
   @GetMapping("/getWxUserInfo")
-  @ResponseBody
-  public JSONObject getWxUserInfo(@RequestParam("code") String code) {
+  public String getWxUserInfo(@RequestParam("code") String code, @RequestParam("state") String state, HttpServletRequest request) {
     log.info("获取到的code：" + code);
+    String toUrl = "";
     JSONObject json = wxUtils.getWxUserInfo(code);
-    return json;
-  }
-
-  @RequestMapping("/index")
-  public String index(HttpServletRequest request){
-    request.setAttribute("requestUrl", request.getRequestURI());
-    return "regist";
+    String openID = json.getString("openid");
+    Test test = testService.findTestByOpenID(openID);
+    if(test != null && StringUtils.hasLength(test.getTestID())){   //已经注册了的联系人
+      if("sqfw".equals(state)){
+        toUrl = state;
+      }else if("mysb".equals(state)){
+        toUrl = state;
+      }
+      request.setAttribute("requestUrl", request.getRequestURI());
+    }else{
+      request.setAttribute("openID", openID);
+      request.getSession().setAttribute("token", Oid.getOid());
+      toUrl = "regist";
+    }
+    return toUrl;
   }
 
 
