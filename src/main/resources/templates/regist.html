@@ -1,0 +1,75 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>联系人注册</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+    <link rel="stylesheet" th:href="@{/css/weui.min.css}"/>
+    <link rel="stylesheet" th:href="@{/css/weuix.css}"/>
+
+    <script th:src="@{/js/zepto.min.js}"></script>
+    <script th:src="@{/js/zepto.weui.js}"></script>
+    <script th:src="@{/webjars/jquery/3.4.1/jquery.js}"></script>
+    <script>
+        $(function () {
+            //解决表单控件不能回弹 只有微信ios有这个问题
+            $("input,select,textarea").blur(function () {
+                setTimeout(() => {
+                    const scrollHeight = document.documentElement.scrollTop || document.body.scrollTop || 0;
+                    window.scrollTo(0, Math.max(scrollHeight - 1, 0));
+                }, 100);
+            })
+
+        });
+
+        //清除文本框内容
+        function cleartxt(obj) {
+            $(obj).prev().find('.weui-input').val("");
+            return false;
+        }
+
+        function submitForm() {
+            var testName = $("input[name='testName']").val();
+            var stel = $("input[name='stel']").val();
+            if(testName === '' || stel === ''){
+                alert('姓名或手机号不能为空');
+                return;
+            }
+            $("form[name='regist']").submit();
+        }
+
+    </script>
+</head>
+
+<body>
+<div class="weui-cells weui-cells_form">
+    <form name="regist" action="/test/addTest" method="post">
+        <input name="openID" type="hidden" th:value="${#request.getAttribute('openID')}">
+        <input name='token' type="hidden" th:value="${#session.getAttribute('token')}">
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">姓名</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" name="testName" placeholder="请输入姓名" type="text">
+            </div>
+            <i class="weui-icon-clear" onclick="javascript:cleartxt(this);"></i>
+        </div>
+
+        <div class="weui-cell">
+            <div class="weui-cell__hd">
+                <label class="weui-label">手机号</label>
+            </div>
+            <div class="weui-cell__bd">
+                <input class="weui-input" name="stel"  placeholder="请输入手机号" type="tel">
+            </div>
+        </div>
+    </form>
+
+</div>
+
+<div class="weui-btn-area">
+    <a class="weui-btn weui-btn_primary" href="javascript:void(0);" onclick="submitForm();" id="registBtn">注册</a>
+</div>
+</body>
+</html>

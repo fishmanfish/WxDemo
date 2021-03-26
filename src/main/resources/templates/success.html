@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=0">
+  <title>成功</title>
+  <link rel="stylesheet" th:href="@{/css/weui.min.css}"/>
+  <link rel="stylesheet" th:href="@{/css/weuix.css}"/>
+</head>
+<body>
+<div class="container">
+  <div class="page msg_success js_show">
+    <form method="post">
+
+      <div class="weui-msg">
+        <div class="weui-msg__icon-area">
+          <i class="weui-icon-success weui-icon_msg"></i>
+        </div>
+        <div class="weui-msg__text-area">
+          <h2 class="weui-msg__title" th:text="${#request.getAttribute('msg')}"></h2>
+        </div>
+      </div>
+
+    </form>
+  </div>
+</div>
+<script th:src="@{/js/zepto.min.js}"></script>
+<script src="https://res.wx.qq.com/open/js/jweixin-1.4.0.js"></script>
+</body>
+</html>
