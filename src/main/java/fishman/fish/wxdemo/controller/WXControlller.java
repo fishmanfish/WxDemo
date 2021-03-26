@@ -88,7 +88,7 @@ public class WXControlller {
    * @param code
    * @return
    */
-  @PostMapping("/getWxUserInfo")
+  @GetMapping("/getWxUserInfo")
   @ResponseBody
   public JSONObject getWxUserInfo(@RequestParam("code") String code) {
     log.info("获取到的code：" + code);

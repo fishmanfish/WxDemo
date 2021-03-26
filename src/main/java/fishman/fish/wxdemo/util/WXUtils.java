@@ -169,6 +169,18 @@ public class WXUtils {
     } else if (StringUtils.hasLength(content) && content.contains("简历反馈")) {
       sendTemp();
       return "";
+    } else if (StringUtils.hasLength(content) && content.contains("登录")) {
+    /**
+     *
+     * 网页授权，获取用户的基本信息
+     * s应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
+     * snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。
+     * 并且， 即使在未关注的情况下，只要用户授权，也能获取其信息
+     */
+      //获取code
+      String url = String.format(GetAuthorizeURL, wx.getAppID(), "http://fishman.free.idcfengye.com/wx/getWxUserInfo");
+      returnMsg = beanToXml(TextMassage.class, new TextMassage(map, "点击这里→ <a href='" + url + "'>登录</a>"));
+      return returnMsg;
     }
     switch (msgType) {
       case "text":   //文本消息
@@ -469,22 +481,10 @@ public class WXUtils {
     return jsApiTicket.getTicket();
   }
 
-  /**
-   *
-   * 网页授权，获取用户的基本信息
-   * s应用授权作用域，snsapi_base （不弹出授权页面，直接跳转，只能获取用户openid），
-   * snsapi_userinfo （弹出授权页面，可通过openid拿到昵称、性别、所在地。
-   * 并且， 即使在未关注的情况下，只要用户授权，也能获取其信息
-   */
-  public void getAuthorizeCode(){
-    //获取code
-    String result = httpUtils.get(String.format(GetAuthorizeURL, wx.getAppID(), ""));
-    log.info("网页授权获取到的code：" + result);
-  }
 
   public String getScopeToken(String code){
     if(scopeToken == null || (scopeToken != null && scopeToken.isExpire())) {
-      String result = httpUtils.get(String.format(GetScopeTokenURL, wx.getAppID(), code));
+      String result = httpUtils.get(String.format(GetScopeTokenURL, wx.getAppID(), wx.getAppSecret(),code));
       if (StringUtils.hasLength(result)) {
         JSONObject tokenJson = JSONObject.parseObject(result);
         scopeToken.setToken(tokenJson.getString("access_token"));
