@@ -16,7 +16,7 @@ public class ResourceConfig implements WebMvcConfigurer {
   @Override
   public void addViewControllers(ViewControllerRegistry registry) {
     registry.addViewController("/error").setViewName("error");
-    registry.addViewController("/saoma").setViewName("saoma");
+    registry.addViewController("/wx/saoma").setViewName("saoma");
   }
 
   /*@Override
